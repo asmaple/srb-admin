@@ -1,5 +1,5 @@
 <template>
-  <div class="test-container">
+  <div class="app-container">
     <span>{{result}}</span>
     <el-button>测试</el-button>
     <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleTest">测试</el-button>

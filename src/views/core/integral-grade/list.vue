@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <el-table :data="list" border stripe style="width: 100%">
       <el-table-column
         type="index"
