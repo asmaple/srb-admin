@@ -20,7 +20,7 @@
       </el-button>
     </div>
 
-    <el-table :data="list" border row-key="id" lazy :load="load">
+    <el-table v-loading="loading" :data="list" border row-key="id" lazy :load="load">
       <el-table-column label="名称" align="left" prop="name" />
       <el-table-column label="编码" prop="dictCode" />
       <el-table-column label="值" align="left" prop="value" />
@@ -68,6 +68,7 @@ export default {
   name: 'list',
   data() {
     return {
+      loading: false,
       dialogVisible: false, //对话框是否显示
       BASE_API: process.env.VUE_APP_BASE_API, //获取后端接口地址
       list: [] // 数据字典列表
@@ -104,15 +105,21 @@ export default {
     },
     // 获取所有顶层节点数据
     fetchData() {
+      this.loading = true
       getDictListByParentId(1).then(response => {
         this.list = response.data.list
+      }).finally(() => {
+        this.loading = false
       })
     },
     // 加载二级节点
     load(tree, treeNode, resolve) {
       // 获取数据
+      this.loading = true
       getDictListByParentId(tree.id).then(response => {
         resolve(response.data.list)
+      }).finally(() =>{
+        this.loading = false
       })
     }
   }
