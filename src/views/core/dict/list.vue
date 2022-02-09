@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div style="margin-bottom: 100px;">
+    <div style="margin-bottom: 20px;">
       <el-button
         @click="dialogVisible = true"
         type="primary"
@@ -19,12 +19,6 @@
         导出Excel
       </el-button>
     </div>
-
-    <el-table v-loading="loading" :data="list" border row-key="id" lazy :load="load">
-      <el-table-column label="名称" align="left" prop="name" />
-      <el-table-column label="编码" prop="dictCode" />
-      <el-table-column label="值" align="left" prop="value" />
-    </el-table>
 
     <!--    导入对话框-->
     <el-dialog
@@ -58,6 +52,13 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-table v-loading="loading" :data="list" border row-key="id" lazy :load="load">
+      <el-table-column label="名称" align="left" prop="name" />
+      <el-table-column label="编码" prop="dictCode" />
+      <el-table-column label="值" align="left" prop="value" />
+    </el-table>
+
   </div>
 </template>
 
