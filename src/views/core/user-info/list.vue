@@ -28,7 +28,7 @@
 
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list" border stripe>
-      <el-table-column label="#" width="50">
+      <el-table-column label="#" width="50" align="center">
         <template slot-scope="scope">
           {{ (page - 1) * limit + scope.$index + 1 }}
         </template>
@@ -78,6 +78,35 @@
           </el-tag>
         </template>
       </el-table-column>
+
+      <el-table-column label="操作" align="center" width="200">
+        <template slot-scope="scope">
+          <el-button
+            v-if="scope.row.status === 1"
+            type="primary"
+            size="mini"
+            @click="onLock(scope.row.id, 0)"
+          >
+            锁定
+          </el-button>
+          <el-button
+            v-else
+            type="danger"
+            size="mini"
+            @click="onLock(scope.row.id, 1)"
+          >
+            解锁
+          </el-button>
+
+          <el-button
+            type="primary"
+            size="mini"
+            @click="showLoginRecord(scope.row.id)"
+          >
+            登录日志
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <!-- 分页组件 -->
@@ -91,11 +120,20 @@
       @size-change="changePageSize"
       @current-change="changeCurrentPage"
     />
+
+    <!-- 用户登录日志 -->
+    <el-dialog title="用户登录日志" :visible.sync="dialogTableVisible">
+      <el-table class="el-dialog-table" :data="loginRecordList" border stripe>
+        <el-table-column type="index" align="center"/>
+        <el-table-column prop="ip" label="IP" align="center"/>
+        <el-table-column prop="createTime" label="登录时间" align="center"/>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getPageList } from '@/api/core/user-info'
+import { getPageList, lock, getUserLoginRecordTop50} from '@/api/core/user-info'
 
 export default {
   name: 'list',
@@ -106,7 +144,9 @@ export default {
       page: 1, // 默认页码
       limit: 10, // 每页记录数
       searchObj: {}, // 查询条件
-      list: []
+      list: [],
+      loginRecordList: [], //会员登录日志
+      dialogTableVisible: false //对话框是否显示
     }
   },
   created() {
@@ -132,8 +172,6 @@ export default {
         this.list = response.data.list
       }).finally(() => {
         this.loading = false
-      }).finally(() =>{
-        this.loading = false
       })
     },
 
@@ -143,6 +181,19 @@ export default {
       //重新查询
       this.fetchData()
     },
+
+    onLock(id, status) {
+      lock(id,status).then(response => {
+        this.$message.success(response.message)
+        this.fetchData()
+      })
+    },
+    showLoginRecord(id) {
+      this.dialogTableVisible = true
+      getUserLoginRecordTop50(id).then(response => {
+        this.loginRecordList = response.data.list
+      })
+    }
   }
 }
 </script>
@@ -150,5 +201,10 @@ export default {
 <style lang="scss" scoped>
 .el-pagination {
   text-align: right;
+}
+
+.el-dialog-table {
+  height: 50vh;
+  overflow: auto;
 }
 </style>
